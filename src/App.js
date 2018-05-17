@@ -7,8 +7,13 @@ const ArticleContainer = styled.ul`
   column-gap: 10px;
 `;
 
+const MainContainer = styled.main`
+  display: grid;
+  grid-template-columns: 25% 75%;
+`;
+
 class App extends Component {
-  state = { articles: [] };
+  state = { feeds: [], articles: [] };
 
   async componentDidMount() {
     const baseURI = 'https://api.rss2json.com/v1/api.json';
@@ -29,22 +34,38 @@ class App extends Component {
     const { articles } = this.state;
     console.log(this.state);
     return (
-      <section>
-        <ArticleContainer>
-          {articles.length > 0 &&
-            articles.map(el => (
-              <Article
-                key={el.article.guid}
-                source={el.source.title}
-                link={el.article.link}
-                date={el.article.pubDate}
-                thumbnail={el.article.thumbnail}
-                title={el.article.title}
-                description={el.article.description}
-              />
-            ))}
-        </ArticleContainer>
-      </section>
+      <MainContainer>
+        <aside>
+          <h1>Content Generator</h1>
+          <input type="text" placeholder="Filter your feeds..." />
+          <ul>
+            {
+              // feeds list
+            }
+          </ul>
+          <hr />
+          <h2>Add a new feed</h2>
+          <input type="text" placeholder="Type your feed name..." />
+          <input type="text" placeholder="Copy your RSS url..." />
+          <button>Add feed</button>
+        </aside>
+        <section>
+          <ArticleContainer>
+            {articles.length > 0 &&
+              articles.map(el => (
+                <Article
+                  key={el.article.guid}
+                  source={el.source.title}
+                  link={el.article.link}
+                  date={el.article.pubDate}
+                  thumbnail={el.article.thumbnail}
+                  title={el.article.title}
+                  description={el.article.description}
+                />
+              ))}
+          </ArticleContainer>
+        </section>
+      </MainContainer>
     );
   }
 }
