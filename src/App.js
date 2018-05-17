@@ -11,12 +11,11 @@ class App extends Component {
   state = { articles: [] };
 
   async componentDidMount() {
-    const newArticles = await this.fetchFeed(
-      'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Ftechcrunch.com%2Ffeed%2F'
-    );
-
+    const baseURI = 'https://api.rss2json.com/v1/api.json';
+    const url = 'https://techcrunch.com/feed/';
+    // const url = 'https://news.ycombinator.com/rss';
+    const newArticles = await this.fetchFeed(`${baseURI}?rss_url=${encodeURIComponent(url)}`);
     const articles = [...this.state.articles, ...newArticles];
-
     this.setState({ articles });
   }
 
