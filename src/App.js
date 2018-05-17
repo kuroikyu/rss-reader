@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
-import './App.css';
+import styled from 'styled-components';
+import Article from './components/Article';
+
+const ArticleContainer = styled.ul`
+  columns: 3;
+  column-gap: 10px;
+`;
 
 class App extends Component {
   state = { articles: [] };
@@ -16,18 +22,29 @@ class App extends Component {
 
   fetchFeed = async uri => {
     const rawData = await (await fetch(uri)).json();
-    const articles = rawData.items.map(item => ({ origin: rawData.feed, article: item }));
-
+    const articles = rawData.items.map(item => ({ source: rawData.feed, article: item }));
     return articles;
   };
 
   render() {
+    const { articles } = this.state;
     console.log(this.state);
     return (
       <section>
-        {this.state.articles.length > 0
-          ? this.state.articles.map(el => <li key={el.article.guid}>{el.article.title}</li>)
-          : ''}
+        <ArticleContainer>
+          {articles.length > 0 &&
+            articles.map(el => (
+              <Article
+                key={el.article.guid}
+                source={el.source.title}
+                link={el.article.link}
+                date={el.article.pubDate}
+                thumbnail={el.article.thumbnail}
+                title={el.article.title}
+                description={el.article.description}
+              />
+            ))}
+        </ArticleContainer>
       </section>
     );
   }
