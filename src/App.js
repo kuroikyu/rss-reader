@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Article from './components/Article';
+import FeedsList from './components/FeedsList';
 
 const ArticleContainer = styled.ul`
   columns: 3;
@@ -24,6 +25,7 @@ class App extends Component {
       { name: 'this will error', url: 'no' },
     ],
     articles: [],
+    feedNameFilter: '',
   };
 
   componentDidMount() {
@@ -109,22 +111,23 @@ class App extends Component {
     this.setState({ feeds: newFeeds, articles: newArticles });
   };
 
+  handleChange = event => {
+    this.setState({ feedNameFilter: event.currentTarget.value });
+  };
+
   render() {
-    const { feeds, articles } = this.state;
-    console.log(articles);
+    const { feeds, articles, feedNameFilter } = this.state;
     return (
       <MainContainer>
         <Sidebar>
           <h1>Content Generator</h1>
-          <input type="text" placeholder="Filter your feeds..." />
-          <ul>
-            {feeds &&
-              feeds.map(feed => (
-                <li key={feed.id}>
-                  {feed.name} <button onClick={() => this.handleDelete(feed.id)}>Delete</button>
-                </li>
-              ))}
-          </ul>
+          <input
+            type="text"
+            placeholder="Filter your feeds..."
+            value={feedNameFilter}
+            onChange={this.handleChange}
+          />
+          <FeedsList feeds={feeds} filter={feedNameFilter} />
           <hr />
           <h2>Add a new feed</h2>
           <form action="" onSubmit={this.handleSubmit}>
