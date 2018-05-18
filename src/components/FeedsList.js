@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 const FeedsList = ({ feeds, filter, handleDelete, handleCheckbox }) => (
   <ul>
-    <h1>{filter}</h1>
     {feeds.filter(feed => feed.name.toLowerCase().indexOf(filter.toLowerCase()) >= 0).map(feed => (
       <li key={feed.id}>
         <input
