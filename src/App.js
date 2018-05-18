@@ -30,6 +30,9 @@ class App extends Component {
     this.fetchAllFeeds();
   }
 
+  feedNameRef = React.createRef();
+  feedURLRef = React.createRef();
+
   fetchAllFeeds = () => {
     const { feeds } = this.state;
     const baseURI = 'https://api.rss2json.com/v1/api.json';
@@ -56,6 +59,29 @@ class App extends Component {
       reject(new Error(rawData.message));
     });
 
+  handleSubmit = async event => {
+    // Stop the form from submitting
+    event.preventDefault();
+
+    // Create new feed object
+    const newFeed = {
+      id: Date.now(),
+      name: this.feedNameRef.current.value,
+      url: this.feedURLRef.current.value,
+    };
+
+    // Reset the form
+    event.currentTarget.reset();
+
+    // Fetch feed
+    const newArticles = await this.fetchFeed(newFeed.url);
+
+    // Update State
+    const feeds = [...this.state.feeds, newFeed];
+    const articles = [...this.state.articles, ...newArticles];
+    this.setState({ feeds, articles });
+  };
+
   render() {
     const { feeds, articles } = this.state;
     return (
@@ -63,12 +89,14 @@ class App extends Component {
         <Sidebar>
           <h1>Content Generator</h1>
           <input type="text" placeholder="Filter your feeds..." />
-          <ul>{feeds && feeds.map(feed => <li>{feed.name}</li>)}</ul>
+          <ul>{feeds && feeds.map(feed => <li key={feed.id}>{feed.name}</li>)}</ul>
           <hr />
           <h2>Add a new feed</h2>
-          <input type="text" placeholder="Type your feed name..." />
-          <input type="text" placeholder="Copy your RSS url..." />
-          <button>Add feed</button>
+          <form action="" onSubmit={this.handleSubmit}>
+            <input type="text" placeholder="Type your feed name..." ref={this.feedNameRef} />
+            <input type="text" placeholder="Copy your RSS url..." ref={this.feedURLRef} />
+            <button type="submit">Add feed</button>
+          </form>
         </Sidebar>
         <section>
           <ArticleContainer>
