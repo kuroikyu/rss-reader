@@ -19,10 +19,15 @@ const Sidebar = styled.aside`
 class App extends Component {
   state = {
     feeds: [
-      { name: 'TechCrunch', url: 'https://techcrunch.com/feed/' },
-      { name: 'The Guardian Tech', url: 'https://www.theguardian.com/uk/technology/rss' },
-      { name: 'Reddit/r/News', url: 'https://www.reddit.com/r/news/.rss' },
-      { name: 'this will error', url: 'no' },
+      // { id: 1, name: 'TechCrunch', url: 'https://techcrunch.com/feed/', solo: false },
+      {
+        id: 2,
+        name: 'The Guardian Tech',
+        url: 'https://www.theguardian.com/uk/technology/rss',
+        solo: false,
+      },
+      { id: 3, name: 'Reddit/r/News', url: 'https://www.reddit.com/r/news/.rss', solo: false },
+      // { id: 4, name: 'this will error', url: 'no', solo: false },
     ],
     articles: [],
     feedNameFilter: '',
@@ -80,6 +85,7 @@ class App extends Component {
       id: Date.now(),
       name: this.feedNameRef.current.value,
       url: this.feedURLRef.current.value,
+      solo: false,
     };
 
     // Reset the form
@@ -115,8 +121,17 @@ class App extends Component {
     this.setState({ feedNameFilter: event.currentTarget.value });
   };
 
+  handleCheckbox = checkedId => {
+    const newState = { ...this.state };
+    const feedToUpdate = newState.feeds.filter(feed => feed.id === checkedId)[0];
+    feedToUpdate.solo = !feedToUpdate.solo;
+    this.setState({ feeds: [...newState.feeds] });
+  };
+
   render() {
     const { feeds, articles, feedNameFilter } = this.state;
+    const soloFeeds = feeds.filter(feed => feed.solo).map(feed => feed.id);
+
     return (
       <MainContainer>
         <Sidebar>
@@ -127,7 +142,12 @@ class App extends Component {
             value={feedNameFilter}
             onChange={this.handleChange}
           />
-          <FeedsList feeds={feeds} filter={feedNameFilter} />
+          <FeedsList
+            feeds={feeds}
+            filter={feedNameFilter}
+            handleDelete={this.handleDelete}
+            handleCheckbox={this.handleCheckbox}
+          />
           <hr />
           <h2>Add a new feed</h2>
           <form action="" onSubmit={this.handleSubmit}>
@@ -139,17 +159,24 @@ class App extends Component {
         <section>
           <ArticleContainer>
             {articles.length > 0 &&
-              articles.map(el => (
-                <Article
-                  key={el.article.guid}
-                  source={el.source.userTitle || el.source.title}
-                  link={el.article.link}
-                  date={el.article.pubDate}
-                  thumbnail={el.article.thumbnail}
-                  title={el.article.title}
-                  description={el.article.description}
-                />
-              ))}
+              articles
+                .filter(article => {
+                  if (soloFeeds.length > 0) {
+                    return soloFeeds.some(solofeed => solofeed === article.source.feedId);
+                  }
+                  return true;
+                })
+                .map(el => (
+                  <Article
+                    key={el.article.guid}
+                    source={el.source.userTitle || el.source.title}
+                    link={el.article.link}
+                    date={el.article.pubDate}
+                    thumbnail={el.article.thumbnail}
+                    title={el.article.title}
+                    description={el.article.description}
+                  />
+                ))}
           </ArticleContainer>
         </section>
       </MainContainer>
