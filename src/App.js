@@ -48,7 +48,7 @@ class App extends Component {
     });
   };
 
-  fetchFeed = url =>
+  fetchFeed = (url, userTitle) =>
     new Promise(async (resolve, reject) => {
       // Build full URL
       const fullURL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
@@ -58,7 +58,10 @@ class App extends Component {
 
       // If the response is ok, build the response object and resolve the promise
       if (rawData.status === 'ok') {
-        const articles = rawData.items.map(item => ({ source: rawData.feed, article: item }));
+        const articles = rawData.items.map(item => ({
+          source: { ...rawData.feed, userTitle },
+          article: item,
+        }));
         resolve(articles);
       }
 
@@ -81,7 +84,7 @@ class App extends Component {
     event.currentTarget.reset();
 
     // Fetch feed
-    const newArticles = await this.fetchFeed(newFeed.url);
+    const newArticles = await this.fetchFeed(newFeed.url, newFeed.name);
 
     // If the user didn't give a name to the feed, infer it from the rss feed
     if (!newFeed.name) {
@@ -116,7 +119,8 @@ class App extends Component {
               articles.map(el => (
                 <Article
                   key={el.article.guid}
-                  source={el.source.title}
+                  source={el.source.userTitle || el.source.title}
+                  sourceURL={el.source.url}
                   link={el.article.link}
                   date={el.article.pubDate}
                   thumbnail={el.article.thumbnail}
