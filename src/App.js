@@ -83,6 +83,11 @@ class App extends Component {
     // Fetch feed
     const newArticles = await this.fetchFeed(newFeed.url);
 
+    // If the user didn't give a name to the feed, infer it from the rss feed
+    if (!newFeed.name) {
+      newFeed.name = newArticles[0].source.title;
+    }
+
     // Update State
     const feeds = [...this.state.feeds, newFeed];
     const articles = [...this.state.articles, ...newArticles];
@@ -101,7 +106,7 @@ class App extends Component {
           <h2>Add a new feed</h2>
           <form action="" onSubmit={this.handleSubmit}>
             <input type="text" placeholder="Type your feed name..." ref={this.feedNameRef} />
-            <input type="text" placeholder="Copy your RSS url..." ref={this.feedURLRef} />
+            <input type="text" placeholder="Copy your RSS url..." ref={this.feedURLRef} required />
             <button type="submit">Add feed</button>
           </form>
         </Sidebar>
