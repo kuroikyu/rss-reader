@@ -35,27 +35,34 @@ class App extends Component {
 
   fetchAllFeeds = () => {
     const { feeds } = this.state;
-    const baseURI = 'https://api.rss2json.com/v1/api.json';
 
+    // Loop through all feeds to get the articles
     feeds.forEach(async feed => {
       try {
-        const fetchedArticles = await this.fetchFeed(
-          `${baseURI}?rss_url=${encodeURIComponent(feed.url)}`
-        );
+        const fetchedArticles = await this.fetchFeed(feed.url);
         this.setState({ articles: [...this.state.articles, ...fetchedArticles] });
       } catch (error) {
+        // TODO: Notify the user somehow
         console.log(error);
       }
     });
   };
 
-  fetchFeed = uri =>
+  fetchFeed = url =>
     new Promise(async (resolve, reject) => {
-      const rawData = await (await fetch(uri)).json();
+      // Build full URL
+      const fullURL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
+
+      // Await response and parse contents
+      const rawData = await (await fetch(fullURL)).json();
+
+      // If the response is ok, build the response object and resolve the promise
       if (rawData.status === 'ok') {
         const articles = rawData.items.map(item => ({ source: rawData.feed, article: item }));
         resolve(articles);
       }
+
+      // Otherwise return the API message as error
       reject(new Error(rawData.message));
     });
 
