@@ -4,12 +4,15 @@ import Article from './components/Article';
 
 const ArticleContainer = styled.ul`
   columns: 3;
-  column-gap: 10px;
+  column-gap: 40px;
+  margin-left: 25%;
 `;
 
-const MainContainer = styled.main`
-  display: grid;
-  grid-template-columns: 25% 75%;
+const MainContainer = styled.main``;
+
+const Sidebar = styled.aside`
+  width: 25%;
+  position: fixed;
 `;
 
 class App extends Component {
@@ -54,24 +57,19 @@ class App extends Component {
     });
 
   render() {
-    const { articles } = this.state;
-    console.log(this.state);
+    const { feeds, articles } = this.state;
     return (
       <MainContainer>
-        <aside>
+        <Sidebar>
           <h1>Content Generator</h1>
           <input type="text" placeholder="Filter your feeds..." />
-          <ul>
-            {
-              // feeds list
-            }
-          </ul>
+          <ul>{feeds && feeds.map(feed => <li>{feed.name}</li>)}</ul>
           <hr />
           <h2>Add a new feed</h2>
           <input type="text" placeholder="Type your feed name..." />
           <input type="text" placeholder="Copy your RSS url..." />
           <button>Add feed</button>
-        </aside>
+        </Sidebar>
         <section>
           <ArticleContainer>
             {articles.length > 0 &&
