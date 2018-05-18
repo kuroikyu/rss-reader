@@ -13,22 +13,45 @@ const MainContainer = styled.main`
 `;
 
 class App extends Component {
-  state = { feeds: [], articles: [] };
+  state = {
+    feeds: [
+      { name: 'TechCrunch', url: 'https://techcrunch.com/feed/' },
+      { name: 'The Guardian Tech', url: 'https://www.theguardian.com/uk/technology/rss' },
+      { name: 'Reddit/r/News', url: 'https://www.reddit.com/r/news/.rss' },
+      { name: 'this will error', url: 'no' },
+    ],
+    articles: [],
+  };
 
-  async componentDidMount() {
-    const baseURI = 'https://api.rss2json.com/v1/api.json';
-    const url = 'https://techcrunch.com/feed/';
-    // const url = 'https://news.ycombinator.com/rss';
-    const newArticles = await this.fetchFeed(`${baseURI}?rss_url=${encodeURIComponent(url)}`);
-    const articles = [...this.state.articles, ...newArticles];
-    this.setState({ articles });
+  componentDidMount() {
+    this.fetchAllFeeds();
   }
 
-  fetchFeed = async uri => {
-    const rawData = await (await fetch(uri)).json();
-    const articles = rawData.items.map(item => ({ source: rawData.feed, article: item }));
-    return articles;
+  fetchAllFeeds = () => {
+    const { feeds } = this.state;
+    const baseURI = 'https://api.rss2json.com/v1/api.json';
+
+    feeds.forEach(async feed => {
+      try {
+        const fetchedArticles = await this.fetchFeed(
+          `${baseURI}?rss_url=${encodeURIComponent(feed.url)}`
+        );
+        this.setState({ articles: [...this.state.articles, ...fetchedArticles] });
+      } catch (error) {
+        console.log(error);
+      }
+    });
   };
+
+  fetchFeed = uri =>
+    new Promise(async (resolve, reject) => {
+      const rawData = await (await fetch(uri)).json();
+      if (rawData.status === 'ok') {
+        const articles = rawData.items.map(item => ({ source: rawData.feed, article: item }));
+        resolve(articles);
+      }
+      reject(new Error(rawData.message));
+    });
 
   render() {
     const { articles } = this.state;
