@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-const StyledArticle = styled.li`
+const StyledLi = styled.li`
   list-style: none;
   display: inline-block;
 `;
@@ -24,7 +24,7 @@ export default class Article extends Component {
   render() {
     const { source, title, link, date, thumbnail, description } = this.props;
     return (
-      <StyledArticle>
+      <StyledLi>
         <article>
           <header>
             <span>{source}</span>
@@ -36,7 +36,7 @@ export default class Article extends Component {
           </h1>
           <p>{description}</p>
         </article>
-      </StyledArticle>
+      </StyledLi>
     );
   }
 }

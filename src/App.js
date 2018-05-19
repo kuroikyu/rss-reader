@@ -1,25 +1,97 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import faSearch from '@fortawesome/fontawesome-free-solid/faSearch';
+
 import Article from './components/Article';
 import FeedsList from './components/FeedsList';
 
 const ArticleContainer = styled.ul`
   columns: 3;
   column-gap: 40px;
+  margin: 0;
+  padding: 25px;
   margin-left: 25%;
 `;
 
 const MainContainer = styled.main``;
 
 const Sidebar = styled.aside`
-  width: 25%;
   position: fixed;
+  top: 0;
+  width: 25%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 15px 30px 0 35px;
+  background-color: var(--background);
+  color: var(--light);
+  h1 {
+    font-weight: 300;
+    font-size: 1.8em;
+    text-align: center;
+    margin: 2em 0;
+  }
+  h2 {
+    font-size: 1.1em;
+    text-align: center;
+  }
+  hr {
+    margin: 3.5em 0;
+    border: 1px solid var(--input-border);
+  }
+  form {
+    padding: 0 1.25em;
+    display: grid;
+    grid-row-gap: 1em;
+  }
+`;
+
+const SearchFeeds = styled.div`
+  display: flex;
+  margin-top: 1em;
+  input {
+    flex-grow: 1;
+    margin-right: 20px;
+  }
+  svg.svg-inline--fa {
+    width: 30px;
+    height: 30px;
+  }
+`;
+
+const SidebarInput = styled.input`
+  background-color: var(--input-background);
+  border: 2px solid var(--input-border);
+  border-radius: 200px;
+  padding: 5px 15px;
+  color: var(--light);
+  width: 100%;
+  &::placeholder {
+    color: var(--placeholder-text);
+    font-style: italic;
+    font-weight: bold;
+  }
+  &:focus {
+    outline: none;
+    border: 2px solid var(--accent);
+  }
+`;
+
+const SidebarButton = styled.button`
+  background: var(--accent);
+  width: 100%;
+  color: var(--light-text);
+  border: none;
+  border-radius: 200px;
+  padding: 5px 15px;
+  font-size: 1.1em;
 `;
 
 class App extends Component {
   state = {
     feeds: [
-      // { id: 1, name: 'TechCrunch', url: 'https://techcrunch.com/feed/', solo: false },
+      { id: 1, name: 'TechCrunch', url: 'https://techcrunch.com/feed/', solo: false },
       {
         id: 2,
         name: 'The Guardian Tech',
@@ -27,6 +99,27 @@ class App extends Component {
         solo: false,
       },
       { id: 3, name: 'Reddit/r/News', url: 'https://www.reddit.com/r/news/.rss', solo: false },
+      {
+        id: 4,
+        name: 'Reddit/r/Android',
+        url: 'https://www.reddit.com/r/android/.rss',
+        solo: false,
+      },
+      { id: 5, name: 'Reddit/r/macOS', url: 'https://www.reddit.com/r/macos/.rss', solo: false },
+      { id: 6, name: 'Reddit/r/apple', url: 'https://www.reddit.com/r/apple/.rss', solo: false },
+      {
+        id: 7,
+        name: 'Reddit/r/javascript',
+        url: 'https://www.reddit.com/r/javascript/.rss',
+        solo: false,
+      },
+      {
+        id: 8,
+        name: 'Reddit/r/factorio',
+        url: 'https://www.reddit.com/r/factorio/.rss',
+        solo: false,
+      },
+
       // { id: 4, name: 'this will error', url: 'no', solo: false },
     ],
     articles: [],
@@ -136,12 +229,15 @@ class App extends Component {
       <MainContainer>
         <Sidebar>
           <h1>Content Generator</h1>
-          <input
-            type="text"
-            placeholder="Filter your feeds..."
-            value={feedNameFilter}
-            onChange={this.handleChange}
-          />
+          <SearchFeeds>
+            <SidebarInput
+              type="text"
+              placeholder="Filter your feeds..."
+              value={feedNameFilter}
+              onChange={this.handleChange}
+            />
+            <FontAwesomeIcon icon={faSearch} />
+          </SearchFeeds>
           <FeedsList
             feeds={feeds}
             filter={feedNameFilter}
@@ -149,11 +245,16 @@ class App extends Component {
             handleCheckbox={this.handleCheckbox}
           />
           <hr />
-          <h2>Add a new feed</h2>
           <form action="" onSubmit={this.handleSubmit}>
-            <input type="text" placeholder="Type your feed name..." ref={this.feedNameRef} />
-            <input type="text" placeholder="Copy your RSS url..." ref={this.feedURLRef} required />
-            <button type="submit">Add feed</button>
+            <h2>Add a new feed</h2>
+            <SidebarInput type="text" placeholder="Type your feed name..." ref={this.feedNameRef} />
+            <SidebarInput
+              type="text"
+              placeholder="Copy your RSS url..."
+              ref={this.feedURLRef}
+              required
+            />
+            <SidebarButton type="submit">Add feed</SidebarButton>
           </form>
         </Sidebar>
         <section>

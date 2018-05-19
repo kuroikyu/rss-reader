@@ -1,3 +1,20 @@
+:root {
+  --background: #58606A;
+  --input-background: #474F57;
+  --input-border: #767E86;
+  --placeholder-text: #9EA1A5;
+  --accent: #5DAAE5;
+  --light: #F1F2F6;
+  --red: #E0AB9A;
+  --light-text: #FFFFFF;
+  --dark-text: #3A3D3F;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Lato', sans-serif;
+}
+
 body {
   margin: 0;
   padding: 0;
