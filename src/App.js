@@ -48,34 +48,36 @@ const Sidebar = styled.aside`
   }
 `;
 
+const SidebarInput = styled.div`
+  input {
+    background-color: var(--input-background);
+    border: 2px solid var(--input-border);
+    border-radius: 200px;
+    padding: 5px 15px;
+    color: var(--light);
+    width: 100%;
+    &::placeholder {
+      color: var(--placeholder-text);
+      font-style: italic;
+      font-weight: bold;
+    }
+    &:focus {
+      outline: none;
+      border: 2px solid var(--accent);
+    }
+  }
+`;
+
 const SearchFeeds = styled.div`
   display: flex;
   margin-top: 1em;
-  input {
+  ${SidebarInput} {
     flex-grow: 1;
     margin-right: 20px;
   }
   svg.svg-inline--fa {
     width: 30px;
     height: 30px;
-  }
-`;
-
-const SidebarInput = styled.input`
-  background-color: var(--input-background);
-  border: 2px solid var(--input-border);
-  border-radius: 200px;
-  padding: 5px 15px;
-  color: var(--light);
-  width: 100%;
-  &::placeholder {
-    color: var(--placeholder-text);
-    font-style: italic;
-    font-weight: bold;
-  }
-  &:focus {
-    outline: none;
-    border: 2px solid var(--accent);
   }
 `;
 
@@ -231,12 +233,14 @@ class App extends Component {
         <Sidebar>
           <h1>Content Generator</h1>
           <SearchFeeds>
-            <SidebarInput
-              type="text"
-              placeholder="Filter your feeds..."
-              value={feedNameFilter}
-              onChange={this.handleChange}
-            />
+            <SidebarInput>
+              <input
+                type="text"
+                placeholder="Filter your feeds..."
+                value={feedNameFilter}
+                onChange={this.handleChange}
+              />
+            </SidebarInput>
             <FontAwesomeIcon icon={faSearch} />
           </SearchFeeds>
           <FeedsList
@@ -248,13 +252,17 @@ class App extends Component {
           <hr />
           <form action="" onSubmit={this.handleSubmit}>
             <h2>Add a new feed</h2>
-            <SidebarInput type="text" placeholder="Type your feed name..." ref={this.feedNameRef} />
-            <SidebarInput
-              type="text"
-              placeholder="Copy your RSS url..."
-              ref={this.feedURLRef}
-              required
-            />
+            <SidebarInput>
+              <input type="text" placeholder="Type your feed name..." ref={this.feedNameRef} />
+            </SidebarInput>
+            <SidebarInput>
+              <input
+                type="text"
+                placeholder="Copy your RSS url..."
+                ref={this.feedURLRef}
+                required
+              />
+            </SidebarInput>
             <SidebarButton type="submit">Add feed</SidebarButton>
           </form>
         </Sidebar>
