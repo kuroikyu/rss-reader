@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import faSearch from '@fortawesome/fontawesome-free-solid/faSearch';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import ArticleList from './components/ArticleList';
 import FeedsList from './components/FeedsList';
@@ -163,7 +165,14 @@ class App extends Component {
       reject(new Error(rawData.message));
     });
 
+  displayError = error =>
+    toast.error(error.toString(), {
+      position: toast.POSITION.BOTTOM_LEFT,
+    });
+
   handleSubmit = async event => {
+    const errors = [];
+
     // Stop the form from submitting
     event.preventDefault();
 
@@ -179,7 +188,15 @@ class App extends Component {
     event.currentTarget.reset();
 
     // Fetch feed
-    const newArticles = await this.fetchFeed(newFeed.url, newFeed.name, newFeed.id);
+    const newArticles = await this.fetchFeed(newFeed.url, newFeed.name, newFeed.id).catch(error =>
+      errors.push(error)
+    );
+
+    // If the feed fetch fails, abort handleSubmit
+    if (errors.length > 0) {
+      errors.forEach(error => this.displayError(error));
+      return 0;
+    }
 
     // If the user didn't give a name to the feed, infer it from the rss feed
     if (!newFeed.name) {
@@ -269,6 +286,7 @@ class App extends Component {
             </SidebarInput>
             <SidebarButton type="submit">Add feed</SidebarButton>
           </form>
+          <ToastContainer />
         </Sidebar>
         <section>{articles.length > 0 && <ArticleList columns={3} articles={articles} />}</section>
       </MainContainer>
