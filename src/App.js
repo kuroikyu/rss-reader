@@ -3,17 +3,8 @@ import styled from 'styled-components';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import faSearch from '@fortawesome/fontawesome-free-solid/faSearch';
 
-import Article from './components/Article';
+import ArticleList from './components/ArticleList';
 import FeedsList from './components/FeedsList';
-
-const ArticleContainer = styled.ul`
-  columns: 3;
-  column-gap: 20px;
-  margin: 0;
-  padding: 40px;
-  margin-left: 25%;
-  background-color: var(--light);
-`;
 
 const MainContainer = styled.main``;
 
@@ -225,8 +216,21 @@ class App extends Component {
   };
 
   render() {
-    const { feeds, articles, feedNameFilter } = this.state;
+    const { feeds, articles: rawArticles, feedNameFilter } = this.state;
+
+    // Apply solo filtering if there's any.
     const soloFeeds = feeds.filter(feed => feed.solo).map(feed => feed.id);
+    const unsortedArticles = rawArticles.filter(article => {
+      if (soloFeeds.length > 0) {
+        return soloFeeds.some(solofeed => solofeed === article.source.feedId);
+      }
+      return true;
+    });
+
+    // Sort articles by date
+    const articles = unsortedArticles.sort(
+      (a, b) => new Date(b.article.pubDate) - new Date(a.article.pubDate)
+    );
 
     return (
       <MainContainer>
@@ -266,29 +270,7 @@ class App extends Component {
             <SidebarButton type="submit">Add feed</SidebarButton>
           </form>
         </Sidebar>
-        <section>
-          <ArticleContainer>
-            {articles.length > 0 &&
-              articles
-                .filter(article => {
-                  if (soloFeeds.length > 0) {
-                    return soloFeeds.some(solofeed => solofeed === article.source.feedId);
-                  }
-                  return true;
-                })
-                .map(el => (
-                  <Article
-                    key={el.article.guid}
-                    source={el.source.userTitle || el.source.title}
-                    link={el.article.link}
-                    date={el.article.pubDate}
-                    thumbnail={el.article.thumbnail}
-                    title={el.article.title}
-                    description={el.article.description}
-                  />
-                ))}
-          </ArticleContainer>
-        </section>
+        <section>{articles.length > 0 && <ArticleList columns={3} articles={articles} />}</section>
       </MainContainer>
     );
   }
