@@ -335,13 +335,15 @@ class App extends Component {
     return (
       <main>
         <Sidebar displaySidebar={displaySidebar}>
-          {windowWidth <= hideSidebarBreak && (
+          {// Show the menu button once it reaches the breakpoint
+          windowWidth <= hideSidebarBreak && (
             <MenuButton onClick={this.handleSidebar}>
               <FontAwesomeIcon icon={displaySidebar ? faTimes : faBars} size="2x" />
               Menu
             </MenuButton>
           )}
-          {(displaySidebar || windowWidth > hideSidebarBreak) && (
+          {// Show the menu if the menu button is clicked or if the device is wide enough
+          (displaySidebar || windowWidth > hideSidebarBreak) && (
             <React.Fragment>
               <h1>Content Generator</h1>
               <SearchFeeds>
@@ -362,7 +364,7 @@ class App extends Component {
                 handleCheckbox={this.handleCheckbox}
               />
               <hr />
-              <form action="" onSubmit={this.handleSubmit}>
+              <form onSubmit={this.handleSubmit}>
                 <h2>Add a new feed</h2>
                 <SidebarInput>
                   <input type="text" placeholder="Type your feed name..." ref={this.feedNameRef} />
