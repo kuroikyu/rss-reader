@@ -151,7 +151,6 @@ class App extends Component {
       //   url: 'https://www.reddit.com/r/factorio/.rss',
       //   solo: false,
       // },
-      // { id: 4, name: 'this will error', url: 'no', solo: false },
     ],
     articles: [],
     feedNameFilter: '',
