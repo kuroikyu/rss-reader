@@ -123,35 +123,34 @@ const SidebarButton = styled.button`
 class App extends Component {
   state = {
     feeds: [
-      { id: 1, name: 'TechCrunch', url: 'https://techcrunch.com/feed/', solo: false },
-      {
-        id: 2,
-        name: 'The Guardian Tech',
-        url: 'https://www.theguardian.com/uk/technology/rss',
-        solo: false,
-      },
-      { id: 3, name: 'Reddit/r/News', url: 'https://www.reddit.com/r/news/.rss', solo: false },
-      {
-        id: 4,
-        name: 'Reddit/r/Android',
-        url: 'https://www.reddit.com/r/android/.rss',
-        solo: false,
-      },
-      { id: 5, name: 'Reddit/r/macOS', url: 'https://www.reddit.com/r/macos/.rss', solo: false },
-      { id: 6, name: 'Reddit/r/apple', url: 'https://www.reddit.com/r/apple/.rss', solo: false },
-      {
-        id: 7,
-        name: 'Reddit/r/javascript',
-        url: 'https://www.reddit.com/r/javascript/.rss',
-        solo: false,
-      },
-      {
-        id: 8,
-        name: 'Reddit/r/factorio',
-        url: 'https://www.reddit.com/r/factorio/.rss',
-        solo: false,
-      },
-
+      // { id: 1, name: 'TechCrunch', url: 'https://techcrunch.com/feed/', solo: false },
+      // {
+      //   id: 2,
+      //   name: 'The Guardian Tech',
+      //   url: 'https://www.theguardian.com/uk/technology/rss',
+      //   solo: false,
+      // },
+      // { id: 3, name: 'Reddit/r/News', url: 'https://www.reddit.com/r/news/.rss', solo: false },
+      // {
+      //   id: 4,
+      //   name: 'Reddit/r/Android',
+      //   url: 'https://www.reddit.com/r/android/.rss',
+      //   solo: false,
+      // },
+      // { id: 5, name: 'Reddit/r/macOS', url: 'https://www.reddit.com/r/macos/.rss', solo: false },
+      // { id: 6, name: 'Reddit/r/apple', url: 'https://www.reddit.com/r/apple/.rss', solo: false },
+      // {
+      //   id: 7,
+      //   name: 'Reddit/r/javascript',
+      //   url: 'https://www.reddit.com/r/javascript/.rss',
+      //   solo: false,
+      // },
+      // {
+      //   id: 8,
+      //   name: 'Reddit/r/factorio',
+      //   url: 'https://www.reddit.com/r/factorio/.rss',
+      //   solo: false,
+      // },
       // { id: 4, name: 'this will error', url: 'no', solo: false },
     ],
     articles: [],
@@ -165,11 +164,21 @@ class App extends Component {
     this.fetchAllFeeds();
     this.handleWindowResize();
 
+    // Reinstate our local storage
+    const localStorageRef = localStorage.getItem('rss-reader-kuroikyu');
+    if (localStorageRef) {
+      this.setState(JSON.parse(localStorageRef));
+    }
+
     // Listen for window resize
     window.addEventListener('resize', this.handleWindowResize);
   }
 
-  componentWillUnmount() {}
+  componentDidUpdate() {
+    // Store data in local storage
+    const currentState = JSON.stringify(this.state);
+    localStorage.setItem('rss-reader-kuroikyu', currentState);
+  }
 
   feedNameRef = React.createRef();
   feedURLRef = React.createRef();
