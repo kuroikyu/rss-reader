@@ -2,22 +2,32 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import faSearch from '@fortawesome/fontawesome-free-solid/faSearch';
+import faBars from '@fortawesome/fontawesome-free-solid/faBars';
+import faTimes from '@fortawesome/fontawesome-free-solid/faTimes';
 import { ToastContainer, toast } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 
 import ArticleList from './components/ArticleList';
 import FeedsList from './components/FeedsList';
 
+// TODO: Move into a helpers file
+const mobileBreak = 756;
+const bigDesktopBreak = 1500;
+const hideSidebarBreak = 1100;
+
 const Sidebar = styled.aside`
   position: fixed;
   top: 0;
-  width: 25%;
+  width: 100%;
+  max-width: 25%;
   height: 100%;
   display: flex;
   flex-direction: column;
   padding: 15px 30px 0 35px;
   background-color: var(--background);
   color: var(--light);
+  z-index: 2;
   h1 {
     font-weight: 300;
     font-size: 1.8em;
@@ -29,14 +39,37 @@ const Sidebar = styled.aside`
     text-align: center;
   }
   hr {
-    margin: 3.5em 0;
-    border: 1px solid var(--input-border);
+    margin: auto 0;
+    border: none;
+    border-bottom: 3px solid var(--input-border);
   }
   form {
     padding: 0 1.25em;
+    margin-bottom: 4em;
     display: grid;
     grid-row-gap: 1em;
   }
+  @media screen and (max-width: 1100px) {
+    ${props =>
+      props.displaySidebar
+        ? `
+    max-width: unset;
+    width: auto;
+    `
+        : `
+    max-width: 4em;
+    padding: 1em 0;
+    `};
+  }
+`;
+
+const MenuButton = styled.button`
+  border: none;
+  background: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  place-items: center;
 `;
 
 const SidebarInput = styled.div`
@@ -123,14 +156,43 @@ class App extends Component {
     ],
     articles: [],
     feedNameFilter: '',
+    columns: 3,
+    windowWidth: 1600,
+    displaySidebar: false,
   };
 
   componentDidMount() {
     this.fetchAllFeeds();
+    this.handleWindowResize();
+
+    // Listen for window resize
+    window.addEventListener('resize', this.handleWindowResize);
   }
+
+  componentWillUnmount() {}
 
   feedNameRef = React.createRef();
   feedURLRef = React.createRef();
+
+  handleWindowResize = () => {
+    // Get devide width
+    const windowWidth = window.innerWidth;
+
+    // initial column state
+    let { columns } = this.state;
+
+    // Apply logic for the different breakpoints
+    if (windowWidth >= bigDesktopBreak) {
+      columns = 3;
+    } else if (windowWidth < bigDesktopBreak && windowWidth > mobileBreak) {
+      columns = 2;
+    } else if (windowWidth < mobileBreak) {
+      columns = 1;
+    }
+
+    // Update state
+    this.setState({ columns, windowWidth });
+  };
 
   fetchAllFeeds = () => {
     const { feeds } = this.state;
@@ -141,7 +203,6 @@ class App extends Component {
         const fetchedArticles = await this.fetchFeed(feed.url, feed.name, feed.id);
         this.setState({ articles: [...this.state.articles, ...fetchedArticles] });
       } catch (error) {
-        // TODO: Notify the user somehow
         console.log(error);
       }
     });
@@ -235,8 +296,19 @@ class App extends Component {
     this.setState({ feeds: [...newState.feeds] });
   };
 
+  handleSidebar = () => {
+    this.setState({ displaySidebar: !this.state.displaySidebar });
+  };
+
   render() {
-    const { feeds, articles: rawArticles, feedNameFilter } = this.state;
+    const {
+      feeds,
+      articles: rawArticles,
+      feedNameFilter,
+      columns,
+      windowWidth,
+      displaySidebar,
+    } = this.state;
 
     // Apply solo filtering if there's any.
     const soloFeeds = feeds.filter(feed => feed.solo).map(feed => feed.id);
@@ -254,44 +326,62 @@ class App extends Component {
 
     return (
       <main>
-        <Sidebar>
-          <h1>Content Generator</h1>
-          <SearchFeeds>
-            <SidebarInput>
-              <input
-                type="text"
-                placeholder="Filter your feeds..."
-                value={feedNameFilter}
-                onChange={this.handleChange}
+        <Sidebar displaySidebar={displaySidebar}>
+          {windowWidth <= hideSidebarBreak && (
+            <MenuButton onClick={this.handleSidebar}>
+              <FontAwesomeIcon icon={displaySidebar ? faTimes : faBars} size="2x" />
+              Menu
+            </MenuButton>
+          )}
+          {(displaySidebar || windowWidth > hideSidebarBreak) && (
+            <React.Fragment>
+              <h1>Content Generator</h1>
+              <SearchFeeds>
+                <SidebarInput>
+                  <input
+                    type="text"
+                    placeholder="Filter your feeds..."
+                    value={feedNameFilter}
+                    onChange={this.handleChange}
+                  />
+                </SidebarInput>
+                <FontAwesomeIcon icon={faSearch} />
+              </SearchFeeds>
+              <FeedsList
+                feeds={feeds}
+                filter={feedNameFilter}
+                handleDelete={this.handleDelete}
+                handleCheckbox={this.handleCheckbox}
               />
-            </SidebarInput>
-            <FontAwesomeIcon icon={faSearch} />
-          </SearchFeeds>
-          <FeedsList
-            feeds={feeds}
-            filter={feedNameFilter}
-            handleDelete={this.handleDelete}
-            handleCheckbox={this.handleCheckbox}
-          />
-          <hr />
-          <form action="" onSubmit={this.handleSubmit}>
-            <h2>Add a new feed</h2>
-            <SidebarInput>
-              <input type="text" placeholder="Type your feed name..." ref={this.feedNameRef} />
-            </SidebarInput>
-            <SidebarInput>
-              <input
-                type="text"
-                placeholder="Copy your RSS url..."
-                ref={this.feedURLRef}
-                required
-              />
-            </SidebarInput>
-            <SidebarButton type="submit">Add feed</SidebarButton>
-          </form>
-          <ToastContainer />
+              <hr />
+              <form action="" onSubmit={this.handleSubmit}>
+                <h2>Add a new feed</h2>
+                <SidebarInput>
+                  <input type="text" placeholder="Type your feed name..." ref={this.feedNameRef} />
+                </SidebarInput>
+                <SidebarInput>
+                  <input
+                    type="text"
+                    placeholder="Copy your RSS url..."
+                    ref={this.feedURLRef}
+                    required
+                  />
+                </SidebarInput>
+                <SidebarButton type="submit">Add feed</SidebarButton>
+              </form>
+              <ToastContainer />
+            </React.Fragment>
+          )}
         </Sidebar>
-        <section>{articles.length > 0 && <ArticleList columns={3} articles={articles} />}</section>
+        <section>
+          {articles.length > 0 && (
+            <ArticleList
+              mobileView={windowWidth < hideSidebarBreak}
+              columns={columns}
+              articles={articles}
+            />
+          )}
+        </section>
       </main>
     );
   }

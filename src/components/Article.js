@@ -11,6 +11,7 @@ const StyledLi = styled.li`
   background-color: white;
   margin-bottom: 20px;
   box-shadow: 0 3px 26px -5px rgba(0, 0, 0, 0.3);
+  width: 100%;
 `;
 
 const ArticleHeader = styled.header`
@@ -34,7 +35,7 @@ const TitleLink = styled.a`
 `;
 
 const ArticleDate = styled.span`
-  font-size: 12px;
+  font-size: 0.75em;
   opacity: 0.8;
 `;
 
@@ -86,7 +87,7 @@ export default class Article extends Component {
       <StyledLi>
         <article>
           <ArticleHeader>
-            <TitleLink href={link}>
+            <TitleLink href={link} target="_blank" rel="noopener noreferrer">
               <FontAwesomeIcon icon={faExternalLinkAlt} />
               <span>{source}</span>
             </TitleLink>

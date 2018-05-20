@@ -40,7 +40,7 @@ const DeleteButton = styled.button`
 `;
 
 const FeedsList = ({ feeds, filter, handleDelete, handleCheckbox }) => (
-  <ul style={{ padding: 0, margin: 0, marginTop: '2em' }}>
+  <ul style={{ padding: 0, margin: '2em 0' }}>
     {feeds.filter(feed => feed.name.toLowerCase().indexOf(filter.toLowerCase()) >= 0).map(feed => (
       <FeedLi key={feed.id}>
         <label>

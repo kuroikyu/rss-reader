@@ -10,6 +10,12 @@
   --dark-text: #3A3D3F;
 }
 
+@media screen and (max-width: 1500px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
 * {
   box-sizing: border-box;
   font-family: 'Lato', sans-serif;

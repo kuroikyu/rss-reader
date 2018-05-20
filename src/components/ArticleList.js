@@ -5,11 +5,11 @@ import styled from 'styled-components';
 import Article from './Article';
 
 const ArticleContainer = styled.ul`
-  column-count: 3;
+  column-count: ${props => props.columns};
   column-gap: 20px;
   margin: 0;
   padding: 40px;
-  margin-left: 25%;
+  margin-left: ${props => (props.mobileView ? '4em' : '25%')};
   background-color: var(--light);
 `;
 
@@ -17,6 +17,7 @@ export default class ArticleList extends Component {
   static propTypes = {
     articles: PropTypes.array.isRequired,
     columns: PropTypes.number.isRequired,
+    mobileView: PropTypes.bool.isRequired,
   };
 
   applyMasonryGrid = (items, columns) => {
@@ -33,10 +34,12 @@ export default class ArticleList extends Component {
   };
 
   render() {
-    const { articles: unMasonrisedArticles, columns } = this.props;
-    const articles = this.applyMasonryGrid(unMasonrisedArticles, columns);
+    const { articles: unMasonrisedArticles, columns, mobileView } = this.props;
+    const articles =
+      columns > 1 ? this.applyMasonryGrid(unMasonrisedArticles, columns) : unMasonrisedArticles;
+
     return (
-      <ArticleContainer>
+      <ArticleContainer columns={columns} mobileView={mobileView}>
         {articles.map(el => (
           <Article
             key={el.article.guid}
@@ -48,6 +51,7 @@ export default class ArticleList extends Component {
             description={el.article.description}
           />
         ))}
+        >
       </ArticleContainer>
     );
   }
