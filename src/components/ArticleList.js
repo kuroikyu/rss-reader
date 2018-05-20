@@ -11,6 +11,7 @@ const ArticleContainer = styled.ul`
   padding: 40px;
   margin-left: ${props => (props.mobileView ? '4em' : '25%')};
   background-color: var(--light);
+  min-height: 100vh;
 `;
 
 export default class ArticleList extends Component {
@@ -51,7 +52,6 @@ export default class ArticleList extends Component {
             description={el.article.description}
           />
         ))}
-        >
       </ArticleContainer>
     );
   }
