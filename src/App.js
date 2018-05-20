@@ -82,6 +82,11 @@ const SidebarButton = styled.button`
   border-radius: 200px;
   padding: 5px 15px;
   font-size: 1.1em;
+  border: 2px solid var(--accent);
+  &:focus {
+    outline: none;
+    border: 2px solid var(--light);
+  }
 `;
 
 class App extends Component {
