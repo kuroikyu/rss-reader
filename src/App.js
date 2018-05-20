@@ -8,8 +8,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import ArticleList from './components/ArticleList';
 import FeedsList from './components/FeedsList';
 
-const MainContainer = styled.main``;
-
 const Sidebar = styled.aside`
   position: fixed;
   top: 0;
@@ -255,7 +253,7 @@ class App extends Component {
     );
 
     return (
-      <MainContainer>
+      <main>
         <Sidebar>
           <h1>Content Generator</h1>
           <SearchFeeds>
@@ -294,7 +292,7 @@ class App extends Component {
           <ToastContainer />
         </Sidebar>
         <section>{articles.length > 0 && <ArticleList columns={3} articles={articles} />}</section>
-      </MainContainer>
+      </main>
     );
   }
 }
