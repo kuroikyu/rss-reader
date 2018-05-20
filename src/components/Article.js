@@ -1,15 +1,65 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import faExternalLinkAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkAlt';
+import dayjs from 'dayjs';
 
 const StyledLi = styled.li`
   list-style: none;
   display: inline-block;
+  background-color: white;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 26px -5px rgba(0, 0, 0, 0.3);
+`;
+
+const ArticleHeader = styled.header`
+  background: var(--background);
+  color: var(--light-text);
+  padding: 25px 20px;
+  display: flex;
+`;
+
+const TitleLink = styled.a`
+  color: inherit;
+  text-decoration: none;
+  flex-grow: 1;
+  svg {
+    margin-right: 1em;
+  }
+  span {
+    font-weight: bold;
+    color: var(--accent);
+  }
+`;
+
+const ArticleDate = styled.span`
+  font-size: 12px;
+  opacity: 0.8;
 `;
 
 const Thumbnail = styled.img`
   width: 100%;
 `;
+
+const ArticleBody = styled.main`
+  padding: 20px;
+  h1 {
+    font-weight: 400;
+    font-size: 1.2rem;
+    opacity: 0.5;
+  }
+`;
+
+const shortenDescription = text => {
+  // Remove any HTML tags from the text
+  const sanitisedText = text.replace(/(<([^>]+)>)/gi, '');
+  // Make it into an array of words
+  const textArray = sanitisedText.split(' ');
+  // Get only the first bunch and put it together as a string again
+  const shortText = textArray.slice(0, 18).join(' ');
+  return `${shortText}...`;
+};
 
 export default class Article extends Component {
   static propTypes = {
@@ -23,18 +73,22 @@ export default class Article extends Component {
 
   render() {
     const { source, title, link, date, thumbnail, description } = this.props;
+    const formatedDate = dayjs(date).format('MMM DD YYYY | HH:mm');
     return (
       <StyledLi>
         <article>
-          <header>
-            <span>{source}</span>
-            <span>{date}</span>
-          </header>
+          <ArticleHeader>
+            <TitleLink href={link}>
+              <FontAwesomeIcon icon={faExternalLinkAlt} />
+              <span>{source}</span>
+            </TitleLink>
+            <ArticleDate>{formatedDate}</ArticleDate>
+          </ArticleHeader>
           {thumbnail && <Thumbnail src={thumbnail} alt={title} />}
-          <h1>
-            <a href={link}>{title}</a>
-          </h1>
-          <p>{description}</p>
+          <ArticleBody>
+            <h1>{title}</h1>
+            <p>{shortenDescription(description)}</p>
+          </ArticleBody>
         </article>
       </StyledLi>
     );

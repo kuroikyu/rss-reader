@@ -8,10 +8,11 @@ import FeedsList from './components/FeedsList';
 
 const ArticleContainer = styled.ul`
   columns: 3;
-  column-gap: 40px;
+  column-gap: 20px;
   margin: 0;
-  padding: 25px;
+  padding: 40px;
   margin-left: 25%;
+  background-color: var(--light);
 `;
 
 const MainContainer = styled.main``;
