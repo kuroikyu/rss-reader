@@ -22,12 +22,13 @@ const Sidebar = styled.aside`
   width: 100%;
   max-width: 25%;
   height: 100%;
+  z-index: 2;
+  overflow: scroll;
   display: flex;
   flex-direction: column;
   padding: 15px 30px 0 35px;
   background-color: var(--background);
   color: var(--light);
-  z-index: 2;
   h1 {
     font-weight: 300;
     font-size: 1.8em;
@@ -38,8 +39,12 @@ const Sidebar = styled.aside`
     font-size: 1.1em;
     text-align: center;
   }
+  ul {
+    flex-grow: 1;
+  }
   hr {
-    margin: auto 0;
+    margin: 0;
+    margin-bottom: 4em;
     border: none;
     border-bottom: 3px solid var(--input-border);
   }
