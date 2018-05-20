@@ -40,14 +40,22 @@ const ArticleDate = styled.span`
 
 const Thumbnail = styled.img`
   width: 100%;
+  height: 12em;
+  object-fit: cover;
 `;
 
 const ArticleBody = styled.main`
-  padding: 20px;
+  padding: 0 20px;
+  color: var(--dark-text);
   h1 {
-    font-weight: 400;
-    font-size: 1.2rem;
-    opacity: 0.5;
+    line-height: 1.4;
+    font-weight: 200;
+    font-size: 1.4rem;
+    opacity: 0.75;
+  }
+  p {
+    line-height: 1.6;
+    font-weight: bold;
   }
 `;
 
